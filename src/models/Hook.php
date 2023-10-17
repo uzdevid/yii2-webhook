@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\db\base;
+namespace uzdevid\webhook\models;
 
 use Yii;
 use yii\db\ActiveQuery;
@@ -11,8 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $url
- * @property string $events
- * @property string $auth
+ * @property array $auth
  *
  * @property Attempt[] $attempts
  * @property HookEvent[] $hookEvents
@@ -30,8 +29,8 @@ class Hook extends ActiveRecord {
      */
     public function rules(): array {
         return [
-            [['url', 'events', 'auth'], 'required'],
-            [['events', 'auth'], 'safe'],
+            [['url', 'auth'], 'required'],
+            [['auth'], 'safe'],
             [['url'], 'string', 'max' => 255],
         ];
     }
@@ -43,7 +42,6 @@ class Hook extends ActiveRecord {
         return [
             'id' => 'ID',
             'url' => 'Url',
-            'events' => 'Events',
             'auth' => 'Auth',
         ];
     }

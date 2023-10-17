@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\db\base;
+namespace uzdevid\webhook\models;
 
 use Yii;
 use yii\db\ActiveQuery;
