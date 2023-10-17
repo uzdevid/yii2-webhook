@@ -2,6 +2,7 @@
 
 namespace uzdevid\webhook\worker;
 
+use uzdevid\webhook\models\Attempt;
 use uzdevid\webhook\models\Hook;
 use yii\base\BaseObject;
 use yii\queue\JobInterface;
@@ -21,6 +22,13 @@ class Worker extends BaseObject implements JobInterface {
     }
 
     public function execute($queue): void {
-
+        $attempt = new Attempt();
+        $attempt->hook_id = $this->hook->id;
+        $attempt->event = 'test';
+        $attempt->payload = json_encode($this->data, JSON_UNESCAPED_UNICODE);
+        $attempt->status = 'pending';
+        $attempt->response = '';
+        $attempt->create_time = date('Y-m-d H:i:s');
+        $attempt->save();
     }
 }
