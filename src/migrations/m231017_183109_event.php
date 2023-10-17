@@ -15,7 +15,6 @@ class m231017_183109_event extends Migration {
             'name' => $this->string(255)->notNull()
         ]);
 
-        $this->addForeignKey('fk_event_hook_id', 'event', 'hook_id', 'hook', 'id', 'CASCADE', 'CASCADE');
         $this->createIndex('idx_event_event', 'event', 'name');
     }
 
