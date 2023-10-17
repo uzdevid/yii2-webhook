@@ -13,7 +13,6 @@ class m231017_162638_hook extends Migration {
         $this->createTable('hook', [
             'id' => $this->primaryKey(),
             'url' => $this->string(255)->notNull(),
-            'events' => $this->json()->notNull(),
             'auth' => $this->json()->notNull(),
         ]);
     }

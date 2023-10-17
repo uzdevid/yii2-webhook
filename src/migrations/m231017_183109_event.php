@@ -11,12 +11,12 @@ class m231017_183109_event extends Migration {
      */
     public function safeUp(): void {
         $this->createTable('event', [
-            'id' => $this->string(255)->notNull()->unique(),
-            'hook_id' => $this->integer()->notNull(),
+            'id' => $this->primaryKey(),
+            'name' => $this->string(255)->notNull()
         ]);
 
-        $this->addPrimaryKey('pk_event_id', 'event', 'id');
         $this->addForeignKey('fk_event_hook_id', 'event', 'hook_id', 'hook', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('idx_event_event', 'event', 'name');
     }
 
     /**
