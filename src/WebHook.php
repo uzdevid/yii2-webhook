@@ -4,7 +4,6 @@ namespace uzdevid\webhook;
 
 use Yii;
 use yii\base\Component;
-use yii\base\Event;
 use yii\queue\redis\Queue;
 
 class WebHook extends Component {
@@ -19,8 +18,7 @@ class WebHook extends Component {
         $this->queue = Yii::$app->get($this->mq);
     }
 
-    public function trigger($name, Event $event = null): void {
-        parent::trigger($name, $event);
-        $this->queue->push(new Dispatcher($name, $event->data, $this));
+    public function call(string $name, array $data = []): void {
+        $this->queue->push(new Dispatcher($name, $data, $this));
     }
 }
