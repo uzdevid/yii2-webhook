@@ -43,7 +43,7 @@ class Dispatcher extends BaseObject implements JobInterface {
         $event = Event::findOne(['name' => $this->event]);
 
         if (is_null($event)) {
-            Yii::warning('Event not found: ' . $this->event);
+            Yii::warning('Event not found: ' . $this->event, 'webhook');
             return;
         }
 
