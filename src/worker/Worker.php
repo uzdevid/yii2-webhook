@@ -65,13 +65,13 @@ class Worker extends BaseObject implements JobInterface {
         $attempt->create_time = date('Y-m-d H:i:s');
         $attempt->save();
 
-        if ($attempt->status != 200 && $this->notLastAttempt()) {
+        if ($attempt->status != 200 && !$this->isLastAttempt()) {
             $this->dispatcher->webhook->queue->delay($this->getDelay())->push(new Worker($this->hook, $this->event, $this->dispatcher, $this->attempt + 1));
         }
     }
 
-    private function notLastAttempt(): bool {
-        return $this->attempt < count($this->dispatcher->webhook->attempts);
+    private function isLastAttempt(): bool {
+        return $this->attempt >= count($this->dispatcher->webhook->attempts);
     }
 
     private function getDelay(): int {
