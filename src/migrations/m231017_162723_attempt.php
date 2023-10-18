@@ -16,7 +16,7 @@ class m231017_162723_attempt extends Migration {
             'event' => $this->string(255)->notNull(),
             'payload' => $this->json()->notNull(),
             'response' => $this->text()->notNull(),
-            'status' => $this->string(255)->notNull(),
+            'status' => $this->tinyInteger(3)->notNull(),
             'create_time' => $this->dateTime()->notNull(),
         ]);
 
