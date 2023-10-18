@@ -27,10 +27,12 @@ class Dispatcher extends BaseObject implements JobInterface {
         /** @var Event $event */
         $event = Event::findOne(['name' => $this->event]);
 
-        $queue = $this->webhook->delay === 0 ? $this->webhook->queue : $this->webhook->queue->delay($this->webhook->delay);
+        if (is_null($event)) {
+            return;
+        }
         
         foreach ($event->hookEvents as $hookEvent) {
-            $queue->push(new Worker($hookEvent->hook, $event, $this));
+            $this->webhook->queue->delay($this->webhook->delay)->push(new Worker($hookEvent->hook, $event, $this));
         }
     }
 }

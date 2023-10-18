@@ -25,7 +25,7 @@ class WebHook extends Component {
         $this->queue->push(new Dispatcher($name, $data, $this));
     }
 
-    public function getDelay(): int|false {
+    public function getDelay(): int|bool {
         return $this->attempts[0] ?? false;
     }
 }
