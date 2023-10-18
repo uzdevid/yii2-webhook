@@ -19,6 +19,13 @@ class Worker extends BaseObject implements JobInterface {
     public string $method = 'POST';
     public Auth $auth;
 
+    protected array $headers = [
+        'Content-Type' => 'application/json',
+        'User-Agent' => 'uzdevid/yii2-webhook',
+    ];
+
+    protected array $queries = [];
+
     public function __construct(Hook $hook, Event $event, Dispatcher $dispatcher) {
         $this->hook = $hook;
         $this->event = $event;
@@ -38,10 +45,8 @@ class Worker extends BaseObject implements JobInterface {
 
         try {
             $response = $client->request($this->method, $this->hook->url, [
-                'query' => $this->auth->getQueries(),
-                'headers' => array_merge([
-                    'Content-Type' => 'application/json',
-                ], $this->auth->getHeaders()),
+                'query' => array_merge($this->queries, $this->auth->getQueries()),
+                'headers' => array_merge($this->headers, $this->auth->getHeaders()),
                 'body' => json_encode($this->dispatcher->data, JSON_UNESCAPED_UNICODE),
             ]);
         } catch (ClientException $e) {
