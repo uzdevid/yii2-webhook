@@ -14,15 +14,11 @@ use yii\queue\redis\Queue;
 class WebHook extends Component {
     public string $mq;
     public Queue $queue;
-    public array $attempts = [];
+    public array $attempts = [0, 60, 120];
 
     public function init(): void {
         parent::init();
         $this->queue = Yii::$app->get($this->mq);
-
-        if (empty($this->attempts)) {
-            $this->attempts = [0, 60, 120];
-        }
     }
 
     public function call(string $name, array $data = []): void {
