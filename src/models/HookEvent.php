@@ -27,7 +27,7 @@ class HookEvent extends ActiveRecord {
     /**
      * @return Connection
      */
-    public function getDb(): Connection {
+    public static function getDb(): Connection {
         return Yii::$app->get(Yii::$app->webhook->dbName);
     }
 
