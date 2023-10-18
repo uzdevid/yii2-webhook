@@ -18,6 +18,7 @@ class Worker extends BaseObject implements JobInterface {
     public Dispatcher $dispatcher;
     public string $method = 'POST';
     public Auth $auth;
+    public int $attempt;
 
     protected array $headers = [
         'Content-Type' => 'application/json',
@@ -26,10 +27,11 @@ class Worker extends BaseObject implements JobInterface {
 
     protected array $queries = [];
 
-    public function __construct(Hook $hook, Event $event, Dispatcher $dispatcher) {
+    public function __construct(Hook $hook, Event $event, Dispatcher $dispatcher, int $attempt = 1) {
         $this->hook = $hook;
         $this->event = $event;
         $this->dispatcher = $dispatcher;
+        $this->attempt = $attempt;
 
         $this->auth = AuthFactory::create($hook->auth['type'], $hook->auth['params']);
         parent::__construct();
@@ -55,6 +57,7 @@ class Worker extends BaseObject implements JobInterface {
 
         $attempt = new Attempt();
         $attempt->hook_id = $this->hook->id;
+        $attempt->attempt = $this->attempt;
         $attempt->event = $this->event->name;
         $attempt->payload = $this->dispatcher->data;
         $attempt->status = $response->getStatusCode();
@@ -62,8 +65,16 @@ class Worker extends BaseObject implements JobInterface {
         $attempt->create_time = date('Y-m-d H:i:s');
         $attempt->save();
 
-        if ($attempt->status != 200) {
-            $this->dispatcher->webhook->queue->delay($this->dispatcher->webhook->defaultDelay)->push(new Worker($this->hook, $this->event, $this->dispatcher));
+        if ($attempt->status != 200 && $this->notLastAttempt()) {
+            $this->dispatcher->webhook->queue->delay($this->getDelay())->push(new Worker($this->hook, $this->event, $this->dispatcher, $this->attempt + 1));
         }
+    }
+
+    private function notLastAttempt(): bool {
+        return $this->attempt < count($this->dispatcher->webhook->attempts);
+    }
+
+    private function getDelay(): int {
+        return $this->dispatcher->webhook->attempts[$this->attempt - 1];
     }
 }

@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property int $hook_id
+ * @property int $attempt
  * @property string $event
  * @property string $payload
  * @property string $response
@@ -33,8 +34,8 @@ class Attempt extends ActiveRecord {
     public function rules(): array {
         return [
             [['hook_id', 'event', 'payload', 'response', 'status', 'create_time'], 'required'],
-            [['hook_id'], 'default', 'value' => null],
-            [['hook_id', 'status'], 'integer'],
+            [['hook_id', 'attempt', 'status'], 'default', 'value' => null],
+            [['hook_id', 'attempt', 'status'], 'integer'],
             [['payload', 'create_time'], 'safe'],
             [['response'], 'string'],
             [['event'], 'string', 'max' => 255],
@@ -49,6 +50,7 @@ class Attempt extends ActiveRecord {
         return [
             'id' => 'ID',
             'hook_id' => 'Hook ID',
+            'attempt' => 'Attempt',
             'event' => 'Event',
             'payload' => 'Payload',
             'response' => 'Response',
