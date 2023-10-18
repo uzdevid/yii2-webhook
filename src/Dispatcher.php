@@ -4,6 +4,7 @@ namespace uzdevid\webhook;
 
 use uzdevid\webhook\models\Event;
 use uzdevid\webhook\worker\Worker;
+use Yii;
 use yii\base\BaseObject;
 use yii\queue\JobInterface;
 
@@ -12,6 +13,7 @@ class Dispatcher extends BaseObject implements JobInterface {
     public Payload $payload;
     public WebHook $webhook;
     public int $time;
+
     /**
      * @param string $event
      * @param Payload $payload
@@ -41,6 +43,7 @@ class Dispatcher extends BaseObject implements JobInterface {
         $event = Event::findOne(['name' => $this->event]);
 
         if (is_null($event)) {
+            Yii::warning('Event not found: ' . $this->event);
             return;
         }
 
