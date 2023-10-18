@@ -5,6 +5,7 @@ namespace uzdevid\webhook\models;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "attempt".
@@ -27,6 +28,13 @@ class Attempt extends ActiveRecord {
      */
     public static function tableName(): string {
         return 'attempt';
+    }
+
+    /**
+     * @return Connection
+     */
+    public function getDb(): Connection {
+        return Yii::$app->get(Yii::$app->webhook->dbName);
     }
 
     /**

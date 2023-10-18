@@ -12,6 +12,7 @@ use yii\queue\redis\Queue;
  * @property int|false $delay
  */
 class WebHook extends Component {
+    public string $dbName = 'db';
     public string $mq;
     public Queue $queue;
     public array $attempts = [0, 60, 120];
