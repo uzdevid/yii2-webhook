@@ -11,9 +11,9 @@ class Payload extends BaseObject implements Arrayable {
 
     public array $event = [];
     public int $attempt;
-    public array $data;
+    public Arrayable|array $data;
 
-    public function __construct(array $data, array $config = []) {
+    public function __construct(Arrayable|array $data, array $config = []) {
         $this->data = $data;
         parent::__construct($config);
     }
