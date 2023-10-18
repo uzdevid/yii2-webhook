@@ -5,6 +5,7 @@ namespace uzdevid\webhook\models;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 
 /**
  * This is the model class for table "event".
