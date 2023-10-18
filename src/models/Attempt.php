@@ -14,7 +14,7 @@ use yii\db\ActiveRecord;
  * @property string $event
  * @property string $payload
  * @property string $response
- * @property string $status
+ * @property int $status
  * @property string $create_time
  *
  * @property Hook $hook
@@ -34,10 +34,10 @@ class Attempt extends ActiveRecord {
         return [
             [['hook_id', 'event', 'payload', 'response', 'status', 'create_time'], 'required'],
             [['hook_id'], 'default', 'value' => null],
-            [['hook_id'], 'integer'],
+            [['hook_id', 'status'], 'integer'],
             [['payload', 'create_time'], 'safe'],
             [['response'], 'string'],
-            [['event', 'status'], 'string', 'max' => 255],
+            [['event'], 'string', 'max' => 255],
             [['hook_id'], 'exist', 'skipOnError' => true, 'targetClass' => Hook::class, 'targetAttribute' => ['hook_id' => 'id']],
         ];
     }
