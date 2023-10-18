@@ -2,10 +2,9 @@
 
 namespace uzdevid\webhook\worker\auths;
 
-use uzdevid\webhook\worker\AuthInterface;
 use uzdevid\webhook\worker\Auth;
 
-class Basic extends Auth implements AuthInterface {
+class Basic extends Auth {
     public string $login;
     public string $password;
 

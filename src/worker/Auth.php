@@ -4,7 +4,7 @@ namespace uzdevid\webhook\worker;
 
 use yii\base\BaseObject;
 
-class Auth extends BaseObject {
+abstract class Auth extends BaseObject {
     public array $headers = [];
     public array $queries = [];
 
@@ -16,6 +16,10 @@ class Auth extends BaseObject {
         unset($this->headers[$name]);
     }
 
+    public function getHeaders(): array {
+        return $this->headers;
+    }
+
     protected function addQuery(string $name, string $value): void {
         $this->queries[$name] = $value;
     }
@@ -23,4 +27,10 @@ class Auth extends BaseObject {
     protected function removeQuery(string $name): void {
         unset($this->queries[$name]);
     }
+
+    public function getQueries(): array {
+        return $this->queries;
+    }
+
+    abstract public function create(): void;
 }
