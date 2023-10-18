@@ -66,7 +66,8 @@ class Worker extends BaseObject implements JobInterface {
         $attempt->save();
 
         if ($attempt->status != 200 && $this->notLastAttempt()) {
-            $this->dispatcher->webhook->queue->delay($this->getDelay())->push(new Worker($this->hook, $this->event, $this->dispatcher, $this->attempt + 1));
+            $queue = $this->getDelay() === 0 ? $this->dispatcher->webhook->queue : $this->dispatcher->webhook->queue->delay($this->getDelay());
+            $queue->push(new Worker($this->hook, $this->event, $this->dispatcher, $this->attempt + 1));
         }
     }
 
