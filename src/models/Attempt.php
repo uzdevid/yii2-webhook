@@ -12,7 +12,8 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property int $hook_id
  * @property int $attempt
- * @property string $event
+ * @property string $event_name
+ * @property string $event_time
  * @property string $payload
  * @property string $response
  * @property int $status
@@ -33,12 +34,12 @@ class Attempt extends ActiveRecord {
      */
     public function rules(): array {
         return [
-            [['hook_id', 'event', 'payload', 'response', 'status', 'create_time'], 'required'],
+            [['hook_id', 'event_name', 'event_time', 'payload', 'response', 'status', 'create_time'], 'required'],
             [['hook_id', 'attempt', 'status'], 'default', 'value' => null],
             [['hook_id', 'attempt', 'status'], 'integer'],
-            [['payload', 'create_time'], 'safe'],
+            [['event_time', 'payload', 'create_time'], 'safe'],
             [['response'], 'string'],
-            [['event'], 'string', 'max' => 255],
+            [['event_name'], 'string', 'max' => 255],
             [['hook_id'], 'exist', 'skipOnError' => true, 'targetClass' => Hook::class, 'targetAttribute' => ['hook_id' => 'id']],
         ];
     }
@@ -51,7 +52,8 @@ class Attempt extends ActiveRecord {
             'id' => 'ID',
             'hook_id' => 'Hook ID',
             'attempt' => 'Attempt',
-            'event' => 'Event',
+            'event_name' => 'Event Name',
+            'event_time' => 'Event Time',
             'payload' => 'Payload',
             'response' => 'Response',
             'status' => 'Status',

@@ -29,6 +29,12 @@ class Worker extends BaseObject implements JobInterface {
 
     protected array $queries = [];
 
+    /**
+     * @param Hook $hook
+     * @param Event $event
+     * @param Dispatcher $dispatcher
+     * @param Attempt|null $lastAttempt
+     */
     public function __construct(Hook $hook, Event $event, Dispatcher $dispatcher, Attempt|null $lastAttempt = null) {
         $this->hook = $hook;
         $this->event = $event;
@@ -47,6 +53,8 @@ class Worker extends BaseObject implements JobInterface {
     }
 
     /**
+     * @param $queue
+     *
      * @throws GuzzleException
      */
     public function execute($queue): void {
@@ -54,21 +62,29 @@ class Worker extends BaseObject implements JobInterface {
 
         $this->auth->create();
 
+        $this->dispatcher->payload->event = [
+            'name' => $this->event->name,
+            'time' => date('Y-m-d H:i:s', $this->dispatcher->time),
+        ];
+
+        $this->dispatcher->payload->attempt = $this->currentAttempt->attempt;
+
         try {
             $response = $client->request($this->method, $this->hook->url, [
                 'query' => array_merge($this->queries, $this->auth->getQueries()),
                 'headers' => array_merge($this->headers, $this->auth->getHeaders()),
-                'body' => json_encode($this->dispatcher->data, JSON_UNESCAPED_UNICODE),
+                'body' => json_encode($this->dispatcher->payload, JSON_UNESCAPED_UNICODE),
             ]);
         } catch (ClientException $e) {
             $response = $e->getResponse();
         }
 
         $this->currentAttempt->hook_id = $this->hook->id;
-        $this->currentAttempt->event = $this->event->name;
-        $this->currentAttempt->payload = $this->dispatcher->data;
+        $this->currentAttempt->event_name = $this->event->name;
+        $this->currentAttempt->payload = $this->dispatcher->payload;
         $this->currentAttempt->status = $response->getStatusCode();
         $this->currentAttempt->response = base64_encode($response->getBody()->getContents());
+        $this->currentAttempt->event_time = date('Y-m-d H:i:s', $this->dispatcher->time);
         $this->currentAttempt->create_time = date('Y-m-d H:i:s');
         $this->currentAttempt->save();
 
@@ -79,10 +95,16 @@ class Worker extends BaseObject implements JobInterface {
         }
     }
 
+    /**
+     * @return bool
+     */
     private function notLastAttempt(): bool {
         return $this->currentAttempt->attempt < count($this->dispatcher->webhook->attempts);
     }
 
+    /**
+     * @return int
+     */
     private function getDelay(): int {
         return $this->dispatcher->webhook->attempts[$this->currentAttempt->attempt];
     }

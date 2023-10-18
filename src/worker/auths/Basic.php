@@ -8,6 +8,9 @@ class Basic extends Auth {
     public string $login;
     public string $password;
 
+    /**
+     * @return void
+     */
     public function create(): void {
         $this->addHeader('Authorization', 'Basic ' . base64_encode($this->login . ':' . $this->password));
     }

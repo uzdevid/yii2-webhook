@@ -9,16 +9,29 @@ use yii\queue\JobInterface;
 
 class Dispatcher extends BaseObject implements JobInterface {
     public string $event;
-    public array $data;
+    public Payload $payload;
     public WebHook $webhook;
-
-    public function __construct(string $event, array $data, WebHook $webhook, array $config = []) {
+    public int $time;
+    /**
+     * @param string $event
+     * @param Payload $payload
+     * @param WebHook $webhook
+     * @param int $time
+     * @param array $config
+     */
+    public function __construct(string $event, Payload $payload, WebHook $webhook, int $time, array $config = []) {
         parent::__construct($config);
         $this->event = $event;
-        $this->data = $data;
+        $this->payload = $payload;
         $this->webhook = $webhook;
+        $this->time = $time;
     }
 
+    /**
+     * @param $queue
+     *
+     * @return void
+     */
     public function execute($queue): void {
         if ($this->webhook->delay === false) {
             return;
@@ -30,7 +43,7 @@ class Dispatcher extends BaseObject implements JobInterface {
         if (is_null($event)) {
             return;
         }
-        
+
         foreach ($event->hookEvents as $hookEvent) {
             $this->webhook->queue->delay($this->webhook->delay)->push(new Worker($hookEvent->hook, $event, $this));
         }

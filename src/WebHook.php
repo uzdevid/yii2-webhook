@@ -16,15 +16,27 @@ class WebHook extends Component {
     public Queue $queue;
     public array $attempts = [0, 60, 120];
 
+    /**
+     * @return void
+     */
     public function init(): void {
         parent::init();
         $this->queue = Yii::$app->get($this->mq);
     }
 
-    public function call(string $name, array $data = []): void {
-        $this->queue->push(new Dispatcher($name, $data, $this));
+    /**
+     * @param string $name
+     * @param Payload $payload
+     *
+     * @return void
+     */
+    public function call(string $name, Payload $payload): void {
+        $this->queue->push(new Dispatcher($name, $payload, $this, time()));
     }
 
+    /**
+     * @return int|bool
+     */
     public function getDelay(): int|bool {
         return $this->attempts[0] ?? false;
     }
