@@ -68,6 +68,8 @@ class AttemptSearch extends Attempt {
             ->andFilterWhere(['ilike', 'payload', $this->payload])
             ->andFilterWhere(['ilike', 'response', $this->response]);
 
+        $query->orderBy(['id' => SORT_DESC]);
+
         return $dataProvider;
     }
 
