@@ -75,18 +75,27 @@ class Hook extends ActiveRecord {
         return $this->hasMany(HookEvent::class, ['hook_id' => 'id']);
     }
 
-    public function afterFind() {
+    public function afterFind(): void {
         parent::afterFind();
 
         $this->auth = json_encode($this->auth, JSON_UNESCAPED_UNICODE);
         $this->events = ArrayHelper::getColumn($this->hookEvents, 'event_id');
     }
 
-    public function beforeSave($insert) {
+    /**
+     * @param $insert
+     *
+     * @return mixed
+     */
+    public function beforeSave($insert): bool {
         if (is_string($this->auth)) {
             $this->auth = json_decode($this->auth, true);
         }
 
+        return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes): void {
         HookEvent::deleteAll(['hook_id' => $this->id]);
 
         foreach ($this->events as $event) {
@@ -96,10 +105,13 @@ class Hook extends ActiveRecord {
             $hookEvent->save();
         }
 
-        return parent::beforeSave($insert);
+        parent::afterSave($insert, $changedAttributes);
     }
 
-    public function allEvents() {
+    /**
+     * @return mixed
+     */
+    public function allEvents(): array {
         return ArrayHelper::map(Event::find()->all(), 'id', 'name');
     }
 }
