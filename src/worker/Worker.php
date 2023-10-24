@@ -9,6 +9,7 @@ use uzdevid\webhook\Dispatcher;
 use uzdevid\webhook\models\Attempt;
 use uzdevid\webhook\models\Event;
 use uzdevid\webhook\models\Hook;
+use uzdevid\webhook\worker\auths\NoAuth;
 use yii\base\BaseObject;
 use yii\helpers\Console;
 use yii\queue\JobInterface;
@@ -48,7 +49,9 @@ class Worker extends BaseObject implements JobInterface {
             $this->currentAttempt->attempt = $this->lastAttempt->attempt + 1;
         }
 
-        $this->auth = AuthFactory::create($hook->auth['type'], $hook->auth['params']);
+        $authParams = json_decode($hook->auth, true);
+        $this->auth = AuthFactory::create($authParams['type'], $authParams['params']);
+
         parent::__construct();
     }
 
@@ -69,9 +72,11 @@ class Worker extends BaseObject implements JobInterface {
 
         $this->dispatcher->payload->attempt = $this->currentAttempt->attempt;
 
+        $queries = array_merge($this->queries, $this->auth->getQueries());
+
         try {
             $response = $client->request($this->method, $this->hook->url, [
-                'query' => array_merge($this->queries, $this->auth->getQueries()),
+                'query' => $queries,
                 'headers' => array_merge($this->headers, $this->auth->getHeaders()),
                 'body' => json_encode($this->dispatcher->payload, JSON_UNESCAPED_UNICODE),
             ]);
@@ -80,16 +85,19 @@ class Worker extends BaseObject implements JobInterface {
         }
 
         $this->currentAttempt->hook_id = $this->hook->id;
-        $this->currentAttempt->job_id = $queue->id;
+        $this->currentAttempt->job_id = $queue->getWorkerPid();
         $this->currentAttempt->event_name = $this->event->name;
         $this->currentAttempt->method = strtoupper($this->method);
-        $this->currentAttempt->url = $this->hook->url . '?' . http_build_query(array_merge($this->queries, $this->auth->getQueries()));
+        $this->currentAttempt->url = empty($queries) ? $this->hook->url : $this->hook->url . '?' . http_build_query($queries);
         $this->currentAttempt->payload = $this->dispatcher->payload;
         $this->currentAttempt->status = $response->getStatusCode();
         $this->currentAttempt->response = base64_encode($response->getBody()->getContents());
         $this->currentAttempt->event_time = date('Y-m-d H:i:s', $this->dispatcher->time);
         $this->currentAttempt->create_time = date('Y-m-d H:i:s');
-        $this->currentAttempt->save();
+
+        if (!$this->currentAttempt->save()) {
+            Console::stdout($this->currentAttempt->errors);
+        }
 
         if ($this->currentAttempt->status != 200 && $this->notLastAttempt()) {
             $this->dispatcher->webhook->queue

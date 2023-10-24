@@ -2,10 +2,10 @@
 
 namespace uzdevid\webhook\module\controllers;
 
-use uzdevid\webhook\search\AttemptSearch;
+use yii\web\Controller;
 
-class DefaultController extends \yii\web\Controller {
+class DefaultController extends Controller {
     public function actionIndex() {
-        return $this->render('index');
+        return $this->redirect(['/wehbook/attempt/index']);
     }
 }
