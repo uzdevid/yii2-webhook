@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Connection;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "hook".
@@ -18,6 +19,8 @@ use yii\db\Connection;
  * @property HookEvent[] $hookEvents
  */
 class Hook extends ActiveRecord {
+    public array $events = [];
+
     /**
      * {@inheritdoc}
      */
@@ -38,7 +41,7 @@ class Hook extends ActiveRecord {
     public function rules(): array {
         return [
             [['url', 'auth'], 'required'],
-            [['auth'], 'safe'],
+            [['auth', 'events'], 'safe'],
             [['url'], 'string', 'max' => 255],
         ];
     }
@@ -70,5 +73,33 @@ class Hook extends ActiveRecord {
      */
     public function getHookEvents(): ActiveQuery {
         return $this->hasMany(HookEvent::class, ['hook_id' => 'id']);
+    }
+
+    public function afterFind() {
+        parent::afterFind();
+
+        $this->auth = json_encode($this->auth, JSON_UNESCAPED_UNICODE);
+        $this->events = ArrayHelper::getColumn($this->hookEvents, 'event_id');
+    }
+
+    public function beforeSave($insert) {
+        if (is_string($this->auth)) {
+            $this->auth = json_decode($this->auth, true);
+        }
+
+        HookEvent::deleteAll(['hook_id' => $this->id]);
+
+        foreach ($this->events as $event) {
+            $hookEvent = new HookEvent();
+            $hookEvent->hook_id = $this->id;
+            $hookEvent->event_id = $event;
+            $hookEvent->save();
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    public function allEvents() {
+        return ArrayHelper::map(Event::find()->all(), 'id', 'name');
     }
 }

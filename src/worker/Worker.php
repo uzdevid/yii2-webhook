@@ -80,7 +80,10 @@ class Worker extends BaseObject implements JobInterface {
         }
 
         $this->currentAttempt->hook_id = $this->hook->id;
+        $this->currentAttempt->job_id = $queue->id;
         $this->currentAttempt->event_name = $this->event->name;
+        $this->currentAttempt->method = strtoupper($this->method);
+        $this->currentAttempt->url = $this->hook->url . '?' . http_build_query(array_merge($this->queries, $this->auth->getQueries()));
         $this->currentAttempt->payload = $this->dispatcher->payload;
         $this->currentAttempt->status = $response->getStatusCode();
         $this->currentAttempt->response = base64_encode($response->getBody()->getContents());

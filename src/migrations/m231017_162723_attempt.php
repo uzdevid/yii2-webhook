@@ -13,7 +13,10 @@ class m231017_162723_attempt extends Migration {
         $this->createTable('attempt', [
             'id' => $this->primaryKey(),
             'hook_id' => $this->integer()->notNull(),
+            'job_id' => $this->integer()->notNull(),
             'attempt' => $this->integer()->notNull()->defaultValue(1),
+            'method' => $this->string(10)->notNull(),
+            'url' => $this->string(255)->notNull(),
             'event_name' => $this->string(255)->notNull(),
             'event_time' => $this->dateTime()->notNull(),
             'payload' => $this->json()->notNull(),
