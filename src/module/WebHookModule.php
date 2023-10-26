@@ -5,6 +5,8 @@ namespace uzdevid\webhook\module;
 use Yii;
 use yii\base\Module;
 use yii\helpers\Url;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 
 class WebHookModule extends Module {
     public $allowedIPs = ['127.0.0.1', '::1'];
@@ -16,16 +18,19 @@ class WebHookModule extends Module {
 
     private $pageTitle;
 
-    public function init() {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_HTML;
+    public function init(): void {
+        Yii::$app->response->format = Response::FORMAT_HTML;
         parent::init();
     }
 
-    public function beforeAction($action) {
-        return parent::beforeAction($action) && $this->checkAccess($action);
+    public function beforeAction($action): bool {
+        if (!parent::beforeAction($action)) return false;
+        if (!$this->checkAccess($action)) throw new ForbiddenHttpException('You are not allowed to access this page.');
+
+        return true;
     }
 
-    protected function checkAccess($action = null) {
+    protected function checkAccess($action = null): bool {
         $allowed = false;
 
         $ip = Yii::$app->getRequest()->getUserIP();
