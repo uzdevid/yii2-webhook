@@ -1,11 +1,13 @@
 <?php
 
+use uzdevid\webhook\module\assets\BootstrapAsset;
 use yii\bootstrap5\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $content string */
 
-\yii\bootstrap5\BootstrapAsset::register($this);
+BootstrapAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
