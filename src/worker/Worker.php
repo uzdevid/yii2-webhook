@@ -5,13 +5,12 @@ namespace uzdevid\webhook\worker;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ServerException;
 use uzdevid\webhook\Dispatcher;
 use uzdevid\webhook\models\Attempt;
 use uzdevid\webhook\models\Event;
 use uzdevid\webhook\models\Hook;
-use uzdevid\webhook\worker\auths\NoAuth;
 use yii\base\BaseObject;
-use yii\helpers\Console;
 use yii\queue\JobInterface;
 
 class Worker extends BaseObject implements JobInterface {
@@ -80,7 +79,7 @@ class Worker extends BaseObject implements JobInterface {
                 'headers' => array_merge($this->headers, $this->auth->getHeaders()),
                 'body' => json_encode($this->dispatcher->payload, JSON_UNESCAPED_UNICODE),
             ]);
-        } catch (ClientException $e) {
+        } catch (ClientException|ServerException $e) {
             $response = $e->getResponse();
         }
 
@@ -95,9 +94,7 @@ class Worker extends BaseObject implements JobInterface {
         $this->currentAttempt->event_time = date('Y-m-d H:i:s', $this->dispatcher->time);
         $this->currentAttempt->create_time = date('Y-m-d H:i:s');
 
-        if (!$this->currentAttempt->save()) {
-            Console::stdout($this->currentAttempt->errors);
-        }
+        $this->currentAttempt->save();
 
         if ($this->currentAttempt->status != 200 && $this->notLastAttempt()) {
             $this->dispatcher->webhook->queue
