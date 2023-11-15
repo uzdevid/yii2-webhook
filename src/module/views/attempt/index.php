@@ -1,7 +1,7 @@
 <?php
 
 use uzdevid\webhook\models\Attempt;
-use yii\bootstrap5\Html;
+use yii\helpers\Html;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Url;

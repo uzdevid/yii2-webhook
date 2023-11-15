@@ -1,7 +1,7 @@
 <?php
 
 use uzdevid\webhook\module\assets\BootstrapAsset;
-use yii\bootstrap5\Html;
+use yii\helpers\Html;
 use yii\web\View;
 
 /* @var $this View */
