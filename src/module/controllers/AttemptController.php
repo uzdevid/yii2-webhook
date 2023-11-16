@@ -4,7 +4,6 @@ namespace uzdevid\webhook\module\controllers;
 
 use uzdevid\webhook\models\Attempt;
 use uzdevid\webhook\search\AttemptSearch;
-use yii\base\Exception;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -16,12 +15,12 @@ class AttemptController extends Controller {
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors(): array {
         return array_merge(
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -35,7 +34,7 @@ class AttemptController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $searchModel = new AttemptSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -53,7 +52,7 @@ class AttemptController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -68,7 +67,7 @@ class AttemptController extends Controller {
      * @return Attempt the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id): Attempt {
         if (($model = Attempt::findOne(['id' => $id])) !== null) {
             return $model;
         }

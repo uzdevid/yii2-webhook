@@ -4,6 +4,7 @@ namespace uzdevid\webhook;
 
 use Yii;
 use yii\base\Component;
+use yii\base\InvalidConfigException;
 use yii\queue\redis\Queue;
 
 /**
@@ -15,10 +16,11 @@ class WebHook extends Component {
     public string $dbName = 'db';
     public string $mq;
     public Queue $queue;
-    public array $attempts = [0, 60, 120];
+    public array $attempts = [0];
 
     /**
      * @return void
+     * @throws InvalidConfigException
      */
     public function init(): void {
         parent::init();

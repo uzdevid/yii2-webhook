@@ -6,6 +6,7 @@ use uzdevid\webhook\models\Event;
 use uzdevid\webhook\worker\Worker;
 use Yii;
 use yii\base\BaseObject;
+use yii\base\NotSupportedException;
 use yii\queue\JobInterface;
 
 class Dispatcher extends BaseObject implements JobInterface {
@@ -33,6 +34,7 @@ class Dispatcher extends BaseObject implements JobInterface {
      * @param $queue
      *
      * @return void
+     * @throws NotSupportedException
      */
     public function execute($queue): void {
         if ($this->webhook->delay === false) {

@@ -3,6 +3,7 @@
 namespace uzdevid\webhook\models;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Connection;
@@ -25,6 +26,7 @@ class Event extends ActiveRecord {
 
     /**
      * @return Connection
+     * @throws InvalidConfigException
      */
     public static function getDb(): Connection {
         return Yii::$app->get(Yii::$app->webhook->dbName);

@@ -23,7 +23,7 @@ class AttemptSearch extends Attempt {
     /**
      * {@inheritdoc}
      */
-    public function scenarios() {
+    public function scenarios(): array {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -35,7 +35,7 @@ class AttemptSearch extends Attempt {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search(array $params): ActiveDataProvider {
         $query = Attempt::find();
 
         // add conditions that should always apply here
@@ -73,7 +73,7 @@ class AttemptSearch extends Attempt {
         return $dataProvider;
     }
 
-    public function rowOptions(Attempt $model) {
+    public function rowOptions(Attempt $model): array {
         return match (true) {
             in_array($model->status, [200, 201, 202, 204, 206]) => ['class' => 'table-success'],
             in_array($model->status, [400, 401, 403, 404, 500]) => ['class' => 'table-danger'],

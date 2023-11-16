@@ -23,7 +23,7 @@ class HookSearch extends Hook {
     /**
      * {@inheritdoc}
      */
-    public function scenarios() {
+    public function scenarios(): array {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -35,7 +35,7 @@ class HookSearch extends Hook {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search(array $params): ActiveDataProvider {
         $query = Hook::find();
 
         // add conditions that should always apply here

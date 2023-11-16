@@ -9,20 +9,23 @@ use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class WebHookModule extends Module {
-    public $allowedIPs = ['127.0.0.1', '::1'];
-    public $allowedHosts = [];
-    public $disableIpRestrictionWarning = false;
+    public array $allowedIPs = ['127.0.0.1', '::1'];
+    public array $allowedHosts = [];
+    public bool $disableIpRestrictionWarning = false;
 
     public $controllerNamespace = 'uzdevid\webhook\module\controllers';
     public $layout = 'main';
 
-    private $pageTitle;
+    private mixed $pageTitle;
 
     public function init(): void {
         Yii::$app->response->format = Response::FORMAT_HTML;
         parent::init();
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function beforeAction($action): bool {
         if (!parent::beforeAction($action)) return false;
         if (!$this->checkAccess($action)) throw new ForbiddenHttpException('You are not allowed to access this page.');

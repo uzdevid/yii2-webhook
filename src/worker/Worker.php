@@ -11,6 +11,7 @@ use uzdevid\webhook\models\Attempt;
 use uzdevid\webhook\models\Event;
 use uzdevid\webhook\models\Hook;
 use yii\base\BaseObject;
+use yii\base\NotSupportedException;
 use yii\queue\JobInterface;
 
 class Worker extends BaseObject implements JobInterface {
@@ -34,6 +35,8 @@ class Worker extends BaseObject implements JobInterface {
      * @param Event $event
      * @param Dispatcher $dispatcher
      * @param Attempt|null $lastAttempt
+     *
+     * @throws NotSupportedException
      */
     public function __construct(Hook $hook, Event $event, Dispatcher $dispatcher, Attempt|null $lastAttempt = null) {
         $this->hook = $hook;
@@ -58,6 +61,7 @@ class Worker extends BaseObject implements JobInterface {
      * @param $queue
      *
      * @throws GuzzleException
+     * @throws NotSupportedException
      */
     public function execute($queue): void {
         $client = new Client();

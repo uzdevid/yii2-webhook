@@ -23,7 +23,7 @@ class EventSearch extends Event {
     /**
      * {@inheritdoc}
      */
-    public function scenarios() {
+    public function scenarios(): array {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -35,7 +35,7 @@ class EventSearch extends Event {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search(array $params): ActiveDataProvider {
         $query = Event::find();
 
         // add conditions that should always apply here

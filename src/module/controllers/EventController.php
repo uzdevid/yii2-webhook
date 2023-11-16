@@ -2,11 +2,14 @@
 
 namespace uzdevid\webhook\module\controllers;
 
+use Throwable;
 use uzdevid\webhook\models\Event;
 use uzdevid\webhook\search\EventSearch;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * EventController implements the CRUD actions for Event model.
@@ -15,12 +18,12 @@ class EventController extends Controller {
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors(): array {
         return array_merge(
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -34,7 +37,7 @@ class EventController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $searchModel = new EventSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -48,9 +51,9 @@ class EventController extends Controller {
      * Creates a new Event model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
-    public function actionCreate() {
+    public function actionCreate(): Response|string {
         $model = new Event();
 
         if ($this->request->isPost) {
@@ -72,10 +75,10 @@ class EventController extends Controller {
      *
      * @param int $id ID
      *
-     * @return string|\yii\web\Response
+     * @return string|Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): Response|string {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -93,10 +96,12 @@ class EventController extends Controller {
      *
      * @param int $id ID
      *
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws Throwable
+     * @throws StaleObjectException
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -111,7 +116,7 @@ class EventController extends Controller {
      * @return Event the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id): Event {
         if (($model = Event::findOne(['id' => $id])) !== null) {
             return $model;
         }
