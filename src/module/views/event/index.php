@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'maxButtonCount' => 15,
                     'options' => [
                         'tag' => 'ul',
-                        'class' => 'pagination',
+                        'class' => 'pagination justify-content-center',
                     ],
                     'linkContainerOptions' => [
                         'tag' => 'li',
