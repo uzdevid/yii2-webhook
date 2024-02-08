@@ -55,9 +55,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => LinkPager::class,
                     'maxButtonCount' => 15,
                     'options' => [
-                        'tag' => 'nav',
-                        'class' => 'd-flex justify-content-center',
-                    ]
+                        'tag' => 'ul',
+                        'class' => 'pagination',
+                    ],
+                    'linkContainerOptions' => [
+                        'tag' => 'li',
+                        'class' => 'page-item'
+                    ],
+                    'linkOptions' => [
+                        'class' => 'page-link'
+                    ],
                 ],
                 'columns' => [
                     'id',

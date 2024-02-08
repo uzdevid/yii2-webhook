@@ -1,9 +1,9 @@
 <?php
 
 use uzdevid\webhook\models\Attempt;
-use yii\helpers\Html;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
 use yii\widgets\Pjax;
@@ -52,9 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => LinkPager::class,
                     'maxButtonCount' => 15,
                     'options' => [
-                        'tag' => 'nav',
-                        'class' => 'd-flex justify-content-center',
-                    ]
+                        'tag' => 'ul',
+                        'class' => 'pagination',
+                    ],
+                    'linkContainerOptions' => [
+                        'tag' => 'li',
+                        'class' => 'page-item'
+                    ],
+                    'linkOptions' => [
+                        'class' => 'page-link'
+                    ],
                 ],
                 'rowOptions' => static function ($model) use ($searchModel) {
                     return $searchModel->rowOptions($model);

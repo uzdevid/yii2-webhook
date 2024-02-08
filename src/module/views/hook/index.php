@@ -9,7 +9,7 @@ use yii\widgets\LinkPager;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
-/** @var app\temp\HookSearch $searchModel */
+/** @var \uzdevid\webhook\search\HookSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Hooks';
@@ -55,9 +55,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => LinkPager::class,
                 'maxButtonCount' => 15,
                 'options' => [
-                    'tag' => 'nav',
-                    'class' => 'd-flex justify-content-center',
-                ]
+                    'tag' => 'ul',
+                    'class' => 'pagination',
+                ],
+                'linkContainerOptions' => [
+                    'tag' => 'li',
+                    'class' => 'page-item'
+                ],
+                'linkOptions' => [
+                    'class' => 'page-link'
+                ],
             ],
             'columns' => [
                 'id',
