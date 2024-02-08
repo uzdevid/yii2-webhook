@@ -5,6 +5,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\LinkPager;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
@@ -50,6 +51,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
+                'pager' => [
+                    'class' => LinkPager::class,
+                    'maxButtonCount' => 15,
+                    'options' => [
+                        'tag' => 'nav',
+                        'class' => 'd-flex justify-content-center',
+                    ]
+                ],
                 'columns' => [
                     'id',
                     'name',
