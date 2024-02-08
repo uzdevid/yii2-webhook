@@ -65,6 +65,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'linkOptions' => [
                         'class' => 'page-link'
                     ],
+                    'disabledPageCssClass' => [
+                        'class' => 'page-link'
+                    ],
+                    'disableCurrentPageButton' => true,
                 ],
                 'columns' => [
                     'id',

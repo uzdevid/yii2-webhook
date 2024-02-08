@@ -62,6 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'linkOptions' => [
                         'class' => 'page-link'
                     ],
+                    'disabledPageCssClass' => [
+                        'class' => 'page-link'
+                    ],
+                    'disableCurrentPageButton' => true,
                 ],
                 'rowOptions' => static function ($model) use ($searchModel) {
                     return $searchModel->rowOptions($model);
