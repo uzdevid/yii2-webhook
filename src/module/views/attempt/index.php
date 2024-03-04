@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="container-fluid">
     <div class="attempt-index">
         <?php Pjax::begin(); ?>
-        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <h2><?= Html::encode($this->title) ?></h2>
 

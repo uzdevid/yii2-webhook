@@ -10,13 +10,19 @@ use yii\data\ActiveDataProvider;
  * AttemptSearch represents the model behind the search form of `uzdevid\webhook\models\Attempt`.
  */
 class AttemptSearch extends Attempt {
+    public string|null $event_time_from = null;
+    public string|null $event_time_to = null;
+
+    public string|null $property_name = null;
+    public string|null $property_value = null;
+
     /**
      * {@inheritdoc}
      */
     public function rules(): array {
         return [
             [['id', 'hook_id', 'attempt', 'status'], 'integer'],
-            [['event_name', 'event_time', 'method', 'url', 'payload', 'response', 'create_time', 'job_id'], 'safe'],
+            [['event_name', 'event_time_from', 'event_time_to', 'url', 'job_id', 'property_name', 'property_value'], 'safe'],
         ];
     }
 
@@ -24,7 +30,6 @@ class AttemptSearch extends Attempt {
      * {@inheritdoc}
      */
     public function scenarios(): array {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -38,8 +43,6 @@ class AttemptSearch extends Attempt {
     public function search(array $params): ActiveDataProvider {
         $query = Attempt::find();
 
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -47,9 +50,19 @@ class AttemptSearch extends Attempt {
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
+        }
+
+        if ($this->event_time_from) {
+            $query->andFilterWhere(['>=', 'event_time', $this->event_time_from]);
+        }
+
+        if ($this->event_time_to) {
+            $query->andFilterWhere(['<=', 'event_time', $this->event_time_to]);
+        }
+
+        if (!is_null($this->property_name) && !is_null($this->property_value)) {
+            $query->andWhere(['payload' . $this->property_name, $this->property_value]);
         }
 
         // grid filtering conditions
@@ -57,16 +70,12 @@ class AttemptSearch extends Attempt {
             'id' => $this->id,
             'hook_id' => $this->hook_id,
             'attempt' => $this->attempt,
-            'event_time' => $this->event_time,
             'status' => $this->status,
-            'create_time' => $this->create_time,
         ]);
 
         $query->andFilterWhere(['ilike', 'event_name', $this->event_name])
             ->andFilterWhere(['ilike', 'method', $this->method])
-            ->andFilterWhere(['ilike', 'url', $this->url])
-            ->andFilterWhere(['ilike', 'payload', $this->payload])
-            ->andFilterWhere(['ilike', 'response', $this->response]);
+            ->andFilterWhere(['ilike', 'url', $this->url]);
 
         $query->orderBy(['id' => SORT_DESC]);
 
