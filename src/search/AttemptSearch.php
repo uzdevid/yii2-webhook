@@ -62,13 +62,14 @@ class AttemptSearch extends Attempt {
         }
 
         if ($this->property_name && $this->property_value) {
-            $query->andWhere(['payload' . $this->property_name, $this->property_value]);
+            $query->andWhere(['payload' . $this->property_name => $this->property_value]);
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'hook_id' => $this->hook_id,
+            'job_id' => $this->job_id,
             'attempt' => $this->attempt,
             'status' => $this->status,
         ]);
