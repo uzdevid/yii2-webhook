@@ -47,7 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="table-responsive">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
                 'pager' => [
                     'class' => LinkPager::class,
                     'maxButtonCount' => 15,
