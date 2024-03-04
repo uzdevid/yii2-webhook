@@ -61,7 +61,7 @@ class AttemptSearch extends Attempt {
             $query->andFilterWhere(['<=', 'event_time', $this->event_time_to]);
         }
 
-        if (!is_null($this->property_name) && !is_null($this->property_value)) {
+        if ($this->property_name && $this->property_value) {
             $query->andWhere(['payload' . $this->property_name, $this->property_value]);
         }
 
