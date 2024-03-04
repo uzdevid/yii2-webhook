@@ -84,7 +84,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => ActionColumn::className(),
                         'template' => '{view}',
-                        'urlCreator' => function ($action, Attempt $model, $key, $index, $column) {
+                        'buttons' => [
+                            'view' => static function ($url, Attempt $model, $key) {
+                                return Html::a('<i class="bi bi-eye"></i>', $url, [
+                                    'class' => 'btn btn-sm btn-success',
+                                    'title' => 'View',
+                                    'data-loader' => 'disable'
+                                ]);
+                            },
+                        ],
+                        'contentOptions' => ['class' => 'text-end', 'style' => 'width: 100px'],
+                        'urlCreator' => static function ($action, Attempt $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);
                         }
                     ],
